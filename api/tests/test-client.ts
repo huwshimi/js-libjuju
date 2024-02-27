@@ -29,7 +29,7 @@ describe("connect", () => {
   let ws: MockWebSocket;
   const options = {
     bakery: makeBakery(true),
-    closeCallback: jest.fn(),
+    closeCallback: { reject: jest.fn(), resolve: jest.fn() },
     facades: [],
     wsclass: makeWSClass((instance: MockWebSocket) => {
       ws = instance;
@@ -280,7 +280,7 @@ describe("connect", () => {
 
   it("login discharge required no bakery", (done) => {
     const options = {
-      closeCallback: jest.fn(),
+      closeCallback: { reject: jest.fn(), resolve: jest.fn() },
       wsclass: makeWSClass((instance: MockWebSocket) => {
         ws = instance;
       }),
@@ -304,7 +304,7 @@ describe("connect", () => {
 
   it("login discharge required no bakery via promises", (done) => {
     const options = {
-      closeCallback: jest.fn(),
+      closeCallback: { reject: jest.fn(), resolve: jest.fn() },
       wsclass: makeWSClass((instance: MockWebSocket) => {
         ws = instance;
       }),
@@ -343,7 +343,7 @@ describe("connect", () => {
   it("login discharge required failure", (done) => {
     const options = {
       bakery: makeBakery(false),
-      closeCallback: jest.fn(),
+      closeCallback: { reject: jest.fn(), resolve: jest.fn() },
       wsclass: makeWSClass((instance: MockWebSocket) => {
         ws = instance;
       }),
@@ -368,7 +368,7 @@ describe("connect", () => {
   it("login discharge required failure via promises", (done) => {
     const options = {
       bakery: makeBakery(false),
-      closeCallback: jest.fn(),
+      closeCallback: { reject: jest.fn(), resolve: jest.fn() },
       wsclass: makeWSClass((instance: MockWebSocket) => {
         ws = instance;
       }),
@@ -427,7 +427,7 @@ describe("connect", () => {
   it("login discharge required success via promise", (done) => {
     const options = {
       bakery: makeBakery(true),
-      closeCallback: jest.fn(),
+      closeCallback: { reject: jest.fn(), resolve: jest.fn() },
       wsclass: makeWSClass((instance: MockWebSocket) => {
         ws = instance;
       }),
@@ -521,7 +521,7 @@ describe("connect", () => {
 
   it("connection info getFacade call", (done) => {
     const options = {
-      closeCallback: jest.fn(),
+      closeCallback: { reject: jest.fn(), resolve: jest.fn() },
       facades: [
         class ClientV2 extends BaseFacade {
           static NAME = "Client";
@@ -555,7 +555,7 @@ describe("connectAndLogin", () => {
   const url = "wss://1.2.3.4";
   const options = {
     bakery: makeBakery(true),
-    closeCallback: jest.fn(),
+    closeCallback: { reject: jest.fn(), resolve: jest.fn() },
     wsclass: makeWSClass((instance: MockWebSocket) => {
       ws = instance;
     }),
@@ -610,7 +610,7 @@ describe("connectAndLogin", () => {
     let modelWS: MockWebSocket;
     const options = {
       bakery: makeBakery(true),
-      closeCallback: jest.fn(),
+      closeCallback: { reject: jest.fn(), resolve: jest.fn() },
       facades: [],
       wsclass: makeWSClass(jest.fn()),
       onWSCreated: (ws: unknown) => {
@@ -675,7 +675,7 @@ describe("connectAndLogin", () => {
         expect(result).not.toBe(null);
         expect(result?.conn).not.toBe(null);
         expect(result?.logout).not.toBe(null);
-        result?.logout(jest.fn());
+        result?.logout({ reject: jest.fn(), resolve: jest.fn() });
         // The WebSocket is now closed.
         expect(modelWS.readyState).toBe(3);
         done();
