@@ -17,8 +17,16 @@ describe("wrapAllModelWatcher", () => {
     static NAME = "AllModelWatcher";
     static VERSION = 1;
 
-    next(_id: number, _callback: (result: Response | CallbackError) => void) {}
-    stop(_id: number, _callback: (result: Response | CallbackError) => void) {}
+    next(
+      _id: number,
+      _resolve: (result: Response) => void,
+      _reject?: (result: CallbackError) => void
+    ) {}
+    stop(
+      _id: number,
+      _resolve: (result: Response) => void,
+      _reject?: (result: CallbackError) => void
+    ) {}
   }
   const options = {
     closeCallback: jest.fn(),
@@ -58,13 +66,13 @@ describe("wrapAllModelWatcher", () => {
     });
   });
 
-  it("next failure", (done) => {
+  it.only("next failure", (done) => {
     makeConnection(options, (conn, ws) => {
       const allModelWatcher = conn?.info.getFacade?.(
         "allModelWatcher"
       ) as AllModelWatcherV1;
       const watcherId = 42;
-      allModelWatcher?.next(watcherId, (err) => {
+      allModelWatcher?.next(watcherId, jest.fn(), (err) => {
         expect(err).toBe("bad wolf");
       });
       // Reply to the next request.

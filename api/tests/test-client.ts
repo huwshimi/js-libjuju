@@ -125,7 +125,6 @@ describe("connect", () => {
 
   it("login redirection error failure via promise", (done) => {
     connect("wss://1.2.3.4", options).then((juju: Client) => {
-      // juju._admin.redirectInfo = jest.fn().mockImplementation(() => null);
       juju
         ?.login({})
         .then(() => fail)

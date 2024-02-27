@@ -106,7 +106,7 @@ function wrapAllModelWatcher(cls: any) {
   */
   cls.prototype.next = function (
     watcherId: string,
-    callback: any
+    callback: Callback<unknown>
   ): Promise<any> {
     // This method is overridden as the auto-generated one does not include the
     // watcherId parameter, as a result of the peculiarity of the call, which
@@ -126,7 +126,7 @@ function wrapAllModelWatcher(cls: any) {
       };
       const handler = createAsyncHandler(callback, resolve, reject, transform);
       // Send the request to the server.
-      this._transport.write(req, handler);
+      this._transport.write(req, handler.resolve, handler.reject);
     });
   };
 

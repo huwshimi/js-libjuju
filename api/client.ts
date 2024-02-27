@@ -287,17 +287,24 @@ class Client {
 
     // eslint-disable-next-line no-async-promise-executor
     return await new Promise(async (resolve, reject) => {
-      let response: any;
       try {
-        response = await this._admin.login(args);
-      } catch (error) {
-        reject(error);
-        return;
-      }
-      try {
-        const dischargeRequired =
-          response["discharge-required"] ||
-          response["bakery-discharge-required"];
+        let response: LoginResult;
+        try {
+          response = await this._admin.login(args);
+        } catch (error) {
+          if (error === INVALIDCREDENTIALS_ERROR) {
+            throw `response
+            Have you been granted permission to a model on this controller?`;
+          } else if (error === PERMISSIONDENIED_ERROR) {
+            throw `response
+            Ensure that you've been given 'login' permission on this controller.`;
+          }
+          throw error;
+        }
+        const dischargeRequired = (response["discharge-required"] ||
+          // Cast to MacaroonObject as the admin facade types the macaroon as a
+          // primitive object.
+          response["bakery-discharge-required"]) as MacaroonObject | undefined;
         if (dischargeRequired) {
           if (!this._bakery) {
             reject(
@@ -318,19 +325,6 @@ class Client {
           };
           this._bakery.discharge(dischargeRequired, onSuccess, onFailure);
           return;
-        } else if (response === REDIRECTION_ERROR) {
-          // This is should be handled by any user of this login method.
-          throw response;
-        } else if (response === INVALIDCREDENTIALS_ERROR) {
-          throw `response
-Have you been granted permission to a model on this controller?`;
-        } else if (response === PERMISSIONDENIED_ERROR) {
-          throw `response
-Ensure that you've been given 'login' permission on this controller.`;
-        } else if (typeof response === "string") {
-          // If the response is a string and not an object it's an error
-          // message and surface that back to the user.
-          throw response;
         }
         resolve(new Connection(this._transport, this._facades, response));
       } catch (error) {
@@ -513,6 +507,7 @@ export class Transport {
       );
       return;
     }
+    console.log(callback);
     if ("error" in resp && resp.error) {
       callback.reject(resp.error);
     } else if ("response" in resp) {
