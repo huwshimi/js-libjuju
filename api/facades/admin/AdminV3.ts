@@ -118,13 +118,13 @@ class AdminV3 implements Facade {
     Login logs in with the provided credentials.  All subsequent requests on the
     connection will act as the authenticated user.
   */
-  login(params: LoginRequest): Promise<LoginResult> {
+  login(): Promise<LoginResult> {
     return new Promise((resolve, reject) => {
       const req: JujuRequest = {
         type: "Admin",
-        request: "Login",
-        version: 3,
-        params: params,
+        request: "LoginWithSessionCookie",
+        version: 4,
+        params: {},
       };
 
       this._transport.write(req, resolve, reject);

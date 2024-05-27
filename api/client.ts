@@ -300,7 +300,7 @@ class Client {
       let response: LoginResult | null = null;
       try {
         try {
-          response = await this._admin.login(args);
+          response = await this._admin.login();
         } catch (error) {
           if (
             error instanceof Error &&
